@@ -52,41 +52,38 @@
     }
 </style>
 
-<div class="container" style="max-width: 1200px;">
+{{-- MUDANÇA: Container com espaçamento vertical py-4 --}}
+<div class="container py-4" style="max-width: 1200px;">
 
-    {{-- Mensagem de sucesso --}}
+    {{-- *** MUDANÇA: Exibir Mensagem de Sucesso *** --}}
     @if(session('success'))
-        <div class="alert alert-success">
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
             {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
+    {{-- *** FIM DA MUDANÇA *** --}}
 
     {{-- Título + Botão --}}
     <div class="d-flex justify-content-between align-items-center mb-4 mt-3">
         <h1>Catálogo de Produtos</h1>
-        {{-- MUDANÇA: Adicionado ícone ao botão --}}
         <a href="{{ route('products.create') }}" class="btn btn-success">
             <i class="bi bi-plus-lg"></i> Novo Produto
         </a>
     </div>
 
     {{-- Lista de produtos --}}
-    <div class="row">
+    {{-- MUDANÇA: Ajustado 'row' para usar row-cols e g-4 para espaçamento --}}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         @forelse($products as $product)
-            {{-- MUDANÇA: Colunas mais responsivas (LG 4, MD 6) --}}
-            <div class="col-lg-4 col-md-6 mb-4">
-                {{-- 
-                  MUDANÇA: Card sem borda, com sombra, 
-                  efeito hover e posição relativa
-                --}}
+            {{-- MUDANÇA: Removido col-lg-4/col-md-6, usando row-cols agora --}}
+            <div class="col">
                 <div class="card h-100 border-0 shadow-sm card-hover position-relative">
                     
-                    {{-- MUDANÇA: Botão "Like" posicionado no canto da imagem --}}
                     <button class="btn btn-outline-danger btn-sm like-btn position-absolute top-0 end-0 m-2" type="button" style="z-index: 10;">
                         <i class="bi bi-heart"></i>
                     </button>
 
-                    {{-- MUDANÇA: Imagem agora é um link --}}
                     <a href="{{ route('products.show', $product->id) }}">
                         @if($product->image)
                             <img src="{{ asset('storage/' . $product->image) }}" class="card-img-top fixed-img" alt="{{ $product->name }}">
@@ -95,30 +92,19 @@
                         @endif
                     </a>
 
-                    {{-- 
-                      MUDANÇA: Corpo do card com d-flex 
-                      e padding-bottom 0 
-                    --}}
                     <div class="card-body d-flex flex-column pb-0">
                         <h5 class="card-title">
-                            {{-- MUDANÇA: Título agora é um link --}}
                             <a href="{{ route('products.show', $product->id) }}" class="card-title-link">
                                 {{ $product->name }}
                             </a>
                         </h5>
                         
-                        {{-- MUDANÇA: Descrição truncada e com estilo --}}
                         <p class="card-text text-muted small text-truncate-lines">
                             {{ $product->description }}
                         </p>
 
-                        {{-- 
-                          MUDANÇA: 'mt-auto' força este bloco 
-                          a ficar na base do card-body 
-                        --}}
                         <div class="mt-auto">
                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                {{-- MUDANÇA: Preço com mais destaque --}}
                                 <span class="h5 mb-0 fw-bold text-success">
                                     R$ {{ number_format($product->price, 2, ',', '.') }}
                                 </span>
@@ -132,31 +118,34 @@
                                 </div>
                             </div>
                         </div>
-
-                        {{-- MUDANÇA: Botão "Ver Produto" REMOVIDO --}}
                     </div>
 
-                    {{-- 
-                      MUDANÇA: Rodapé transparente e sem borda 
-                      para as ações de compra 
-                    --}}
                     <div class="card-footer d-flex justify-content-between align-items-center bg-transparent border-top-0 pt-0">
+                        {{-- Formulário Add Carrinho --}}
                         <form action="{{ route('cart.add', $product->id) }}" method="POST" class="d-flex align-items-center gap-2">
                             @csrf
                             <input type="number" name="quantity" min="1" value="1" class="form-control form-control-sm" style="max-width: 70px;">
-                            {{-- MUDANÇA: Botão com ícone e texto responsivo --}}
                             <button type="submit" class="btn btn-success btn-sm">
                                 <i class="bi bi-cart-plus"></i>
                                 <span class="d-none d-lg-inline ms-1">Adicionar</span>
                             </button>
                         </form>
-                        {{-- MUDANÇA: Botão "Like" REMOVIDO daqui --}}
-                    </div>
 
+                        {{-- *** MUDANÇA: Formulário para REMOVER o Produto *** --}}
+                        <form action="{{ route('products.destroy', $product->id) }}" method="POST" class="ms-2">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger btn-sm" 
+                                    onclick="return confirm('Tem certeza que deseja excluir este produto?')"> 
+                                <i class="bi bi-trash-fill"></i> 
+                                {{-- <span class="d-none d-md-inline">Excluir</span> --}} {{-- Texto opcional --}}
+                            </button>
+                        </form>
+                        {{-- *** FIM DA MUDANÇA *** --}}
+                    </div>
                 </div>
             </div>
         @empty
-            {{-- MUDANÇA: Mensagem de "vazio" mais agradável --}}
             <div class="col-12">
                 <div class="alert alert-info text-center">
                     <h4 class="alert-heading">Ops!</h4>
@@ -164,8 +153,14 @@
                 </div>
             </div>
         @endforelse
+    </div> {{-- Fim da div.row --}}
+
+    {{-- Paginação --}}
+    <div class="d-flex justify-content-center mt-4">
+        {{ $products->links() }}
     </div>
-</div>
+
+</div> {{-- Fim do container --}}
 
 {{-- Script para alternar o coração --}}
 <script>
@@ -175,14 +170,12 @@
             if (icon.classList.contains('bi-heart')) {
                 icon.classList.remove('bi-heart');
                 icon.classList.add('bi-heart-fill');
-                {{-- MUDANÇA: Atualizado para btn-outline-danger --}}
                 button.classList.remove('btn-outline-danger'); 
                 button.classList.add('btn-danger');
             } else {
                 icon.classList.remove('bi-heart-fill');
                 icon.classList.add('bi-heart');
                 button.classList.remove('btn-danger');
-                {{-- MUDANÇA: Atualizado para btn-outline-danger --}}
                 button.classList.add('btn-outline-danger');
             }
         });
