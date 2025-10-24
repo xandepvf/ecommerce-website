@@ -25,6 +25,9 @@ Route::middleware('auth')->group(function () {
     // Rota para o Histórico de pedidos do usuário
     Route::get('/meus-pedidos', [OrderController::class, 'index'])->name('orders.index');
 
+    // *** ROTA ADICIONADA: Mostrar detalhes de um pedido específico ***
+    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show'); 
+
     // Rota Dashboard (opcional, se você criou a view e rota)
     Route::get('/dashboard', function () {
             return view('dashboard');
@@ -37,10 +40,8 @@ Route::resource('products', ProductController::class);
 // Rotas do Carrinho - Acesso Aberto
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 Route::post('/cart/add/{id}', [CartController::class, 'addToCart'])->name('cart.add'); // Mantido seu método addToCart
-// --- ROTAS ADICIONADAS ---
 Route::patch('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update'); // Rota para atualizar quantidade
 Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove'); // Rota para remover item
-// --- FIM DAS ROTAS ADICIONADAS ---
 
 // Rota para exibir a página de checkout - Acesso Aberto
 Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');

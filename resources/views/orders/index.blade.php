@@ -56,13 +56,13 @@
                                         @endphp
                                         <span class="badge rounded-pill {{ $statusClass }}">{{ ucfirst($order->status) }}</span>
                                     </td>
-                                     {{-- MUDANÇA: Botão (desabilitado) para Ver Detalhes --}}
-                                    <td class="py-3 px-4 text-end">
-                                        {{-- Para habilitar, crie a rota 'orders.show' e o método no controller --}}
-                                        <a href="#" class="btn btn-sm btn-outline-primary disabled" title="Ver Detalhes">
-                                            <i class="bi bi-eye-fill"></i> Detalhes
-                                        </a>
-                                    </td>
+                                    {{-- MUDANÇA: Botão (desabilitado) para Ver Detalhes --}}
+<td class="py-3 px-4 text-end">
+    {{-- *** MUDANÇA AQUI: Corrigir href e remover 'disabled' *** --}}
+    <a href="{{ route('orders.show', $order->id) }}" class="btn btn-sm btn-outline-primary" title="Ver Detalhes">
+        <i class="bi bi-eye-fill"></i> Detalhes
+    </a>
+</td>
                                 </tr>
                             @endforeach
                         </tbody>
