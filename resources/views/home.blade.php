@@ -10,13 +10,8 @@
         
         {{-- Coluna da Imagem --}}
         <div class="col-10 col-sm-8 col-lg-6">
-            {{-- 
-              Use a função asset() do Laravel para carregar uma imagem da sua pasta 'public'.
-              Estou usando um placeholder (imagem de exemplo) por enquanto.
-              Troque 'https://via.placeholder.com/700x500' pela sua imagem.
-              Ex: {{ asset('images/minha-imagem-hero.jpg') }}
-            --}}
-            <img src="https://media.licdn.com/dms/image/v2/C5603AQFUCKotLLsm-g/profile-displayphoto-shrink_100_100/profile-displayphoto-shrink_100_100/0/1623959370859?e=2147483647&v=beta&t=1ofkSnyJR5h7cArO_hKQAPo-z7qKAPtnMSZncJz-lfg" 
+           
+            <img src="https://cdn.jornaldebrasilia.com.br/wp-content/uploads/2024/10/25154253/Snapinsta.app_463767821_2423573118034160_5858705213747078273_n_1080-883x1024.jpg" 
                  class="d-block mx-lg-auto img-fluid rounded shadow-sm" 
                  alt="Imagem de destaque da loja" 
                  width="700" height="500" loading="lazy">
