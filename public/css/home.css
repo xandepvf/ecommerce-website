@@ -1,0 +1,31 @@
+body {
+    background-color: rgb(176, 174, 174) !important;
+}
+
+.nava {
+    background-color: rgb(255, 255, 255);
+}
+
+/* Altura fixa para imagem */
+.fixed-img {
+    height: 200px;
+    object-fit: cover;
+}
+
+/* Tamanho fixo do card */
+.custom-card {
+    width: 10px;
+    height: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Para garantir altura consistente no corpo */
+.card-body {
+    flex: 1; /* faz o body ocupar espaço restante */
+}
+
+/* Estiliza o botão de like quando estiver ativo */
+.like-btn.btn-danger i {
+    color: white;
+}
