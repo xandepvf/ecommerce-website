@@ -7,31 +7,43 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
+// Rota da Página Inicial
 Route::get('/', function () {
     return view('home');
 })->name('home');
 
+// Grupo de Rotas que Exigem Autenticação
 Route::middleware('auth')->group(function () {
-    // Profile routes
+    // Rotas de Perfil (do Breeze)
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Checkout finalização
+    // Rota para processar o pagamento/finalizar o pedido
     Route::post('/checkout/store', [CheckoutController::class, 'store'])->name('checkout.store');
 
-    // Histórico de pedidos
+    // Rota para o Histórico de pedidos do usuário
     Route::get('/meus-pedidos', [OrderController::class, 'index'])->name('orders.index');
+
+    // Rota Dashboard (opcional, se você criou a view e rota)
+    Route::get('/dashboard', function () {
+            return view('dashboard');
+    })->name('dashboard');
 });
 
-// Produtos (acesso aberto)
+// Rotas de Produtos (CRUD completo) - Acesso Aberto
 Route::resource('products', ProductController::class);
 
-// Carrinho (acesso aberto)
+// Rotas do Carrinho - Acesso Aberto
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-Route::post('/cart/add/{id}', [CartController::class, 'addToCart'])->name('cart.add');
+Route::post('/cart/add/{id}', [CartController::class, 'addToCart'])->name('cart.add'); // Mantido seu método addToCart
+// --- ROTAS ADICIONADAS ---
+Route::patch('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update'); // Rota para atualizar quantidade
+Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove'); // Rota para remover item
+// --- FIM DAS ROTAS ADICIONADAS ---
 
-// Tela de checkout (pode deixar sem login ou adicionar middleware se quiser)
+// Rota para exibir a página de checkout - Acesso Aberto
 Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
 
+// Inclui as rotas de autenticação (login, register, etc.) do Breeze
 require __DIR__.'/auth.php';
