@@ -20,7 +20,7 @@
         {{-- Coluna do Texto e Botão --}}
         <div class="col-lg-6">
             {{-- Nome da loja --}}
-            <h1 class="display-4 fw-bold lh-1 mb-4">Bem-vindo à Minha Loja</h1>
+            <h1 class="display-4 fw-bold lh-1 mb-4">Bem-vindo</h1>
 
             {{-- Chamada principal --}}
             <p class="lead mb-4">
