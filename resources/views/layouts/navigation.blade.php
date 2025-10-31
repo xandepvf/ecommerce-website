@@ -1,7 +1,3 @@
-{{-- 
-  MUDANÇA: Troquei 'nava border-b border-gray-100' por 'bg-white shadow-sm' 
-  para dar um fundo branco e uma sombra suave, que é mais moderno. 
---}}
 <nav x-data="{ open: false }" class="bg-white shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
@@ -12,9 +8,9 @@
                     </a>
                 </div>
 
+                {{-- ======================== MENU DESKTOP ======================== --}}
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     
-                    {{-- MUDANÇA: Adicionado ícone de "Home" --}}
                     <x-nav-link :href="route('home')" :active="request()->routeIs('home')">
                         <span class="flex items-center">
                             <svg class="h-5 w-5 me-1.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -25,7 +21,6 @@
                     </x-nav-link>
 
                     @auth
-                        {{-- MUDANÇA: Adicionado ícone de "Produtos" --}}
                         <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.*')">
                              <span class="flex items-center">
                                 <svg class="h-5 w-5 me-1.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -35,7 +30,6 @@
                             </span>
                         </x-nav-link>
 
-                        {{-- MUDANÇA: Adicionado ícone de "Carrinho" --}}
                         <x-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.*')">
                              <span class="flex items-center">
                                 <svg class="h-5 w-5 me-1.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -45,7 +39,6 @@
                             </span>
                         </x-nav-link>
 
-                        {{-- MUDANÇA: Adicionado ícone de "Meus Pedidos" --}}
                          <x-nav-link :href="route('orders.index')" :active="request()->routeIs('orders.index')">
                              <span class="flex items-center">
                                 <svg class="h-5 w-5 me-1.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -54,15 +47,24 @@
                                 {{ __('Meus Pedidos') }}
                             </span>
                         </x-nav-link>
+                        
+                        {{-- Link de Favoritos (Desktop) - Está correto --}}
+                        <x-nav-link :href="route('favorites.index')" :active="request()->routeIs('favorites.index')">
+                             <span class="flex items-center">
+                                <x-icons.heart class="h-5 w-5 me-1.5" />
+                                {{ __('Favoritos') }}
+                            </span>
+                        </x-nav-link>
                     @endauth
                 </div>
             </div>
 
+            {{-- *** ESTE É O BLOCO QUE FALTAVA *** --}}
             @auth
+            {{-- Dropdown do Usuário (Desktop) --}}
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
-                        {{-- MUDANÇA: Adicionado 'hover:bg-gray-50' para feedback visual --}}
                         <button
                             class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:bg-gray-50 hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
                             <div>{{ Auth::user()->name }}</div>
@@ -79,7 +81,6 @@
                     </x-slot>
 
                     <x-slot name="content">
-                        {{-- MUDANÇA: Adicionado ícone de "Perfil" --}}
                         <x-dropdown-link :href="route('profile.edit')">
                              <span class="flex items-center">
                                 <svg class="h-5 w-5 me-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -91,8 +92,6 @@
 
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-
-                            {{-- MUDANÇA: Adicionado ícone de "Sair" --}}
                             <x-dropdown-link :href="route('logout')"
                                 onclick="event.preventDefault();
                                                 this.closest('form').submit();">
@@ -108,11 +107,11 @@
                 </x-dropdown>
             </div>
             @endauth
+            {{-- *** FIM DO BLOCO RESTAURADO *** --}}
 
-            {{-- MUDANÇA: Links de "Entrar" e "Registrar" redesenhados --}}
             @guest
+            {{-- Links de Guest (Desktop) --}}
             <div class="hidden sm:flex sm:items-center sm:ms-6 space-x-4">
-                {{-- Link "Entrar" com estilo sutil --}}
                 <a href="{{ route('login') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-md transition duration-150 ease-in-out">
                     <svg class="h-5 w-5 me-1.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
@@ -120,7 +119,6 @@
                     {{ __('Entrar') }}
                 </a>
                 
-                {{-- Botão "Registrar" com destaque (CTA) --}}
                 <a href="{{ route('register') }}" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-150 ease-in-out">
                     <svg class="h-5 w-5 me-1.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.5 21h-5.234A12.318 12.318 0 014 19.235z" />
@@ -130,6 +128,7 @@
             </div>
             @endguest
 
+            {{-- Botão Hamburger (Mobile) --}}
             <div class="-me-2 flex items-center sm:hidden">
                 <button @click="open = ! open"
                     class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
@@ -144,10 +143,10 @@
         </div>
     </div>
 
+    {{-- ======================== MENU RESPONSIVO (MOBILE) ======================== --}}
     <div :class="{ 'block': open, 'hidden': !open }" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
             
-            {{-- MUDANÇA: Ícones no menu responsivo --}}
             <x-responsive-nav-link :href="route('home')" :active="request()->routeIs('home')">
                 <span class="flex items-center">
                     <svg class="h-5 w-5 me-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -182,21 +181,29 @@
                         {{ __('Meus Pedidos') }}
                     </span>
                 </x-responsive-nav-link>
+
+                {{-- Link de Favoritos (Mobile) - Está correto --}}
+                <x-responsive-nav-link :href="route('favorites.index')" :active="request()->routeIs('favorites.index')">
+                    <span class="flex items-center">
+                        <x-icons.heart class="h-5 w-5 me-2" />
+                        {{ __('Favoritos') }}
+                    </span>
+                </x-responsive-nav-link>
             @endauth
         </div>
 
         @auth
+        {{-- Dropdown do Usuário (Mobile) --}}
         <div class="pt-4 pb-1 border-t border-gray-200">
             <div class="px-4">
                 <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
                 <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
             </div>
-
             <div class="mt-3 space-y-1">
                 <x-responsive-nav-link :href="route('profile.edit')">
                     <span class="flex items-center">
                         <svg class="h-5 w-5 me-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
                         {{ __('Perfil') }}
                     </span>
@@ -204,13 +211,11 @@
 
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-
                     <x-responsive-nav-link :href="route('logout')"
-                        onclick="event.preventDefault();
-                                        this.closest('form').submit();">
+                        onclick="event.preventDefault(); this.closest('form').submit();">
                         <span class="flex items-center text-red-600">
                             <svg class="h-5 w-5 me-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
                             </svg>
                             {{ __('Sair') }}
                         </span>
@@ -220,8 +225,8 @@
         </div>
         @endauth
 
-        {{-- MUDANÇA: Seção @guest no menu responsivo --}}
         @guest
+        {{-- Links de Guest (Mobile) --}}
         <div class="pt-4 pb-3 border-t border-gray-200">
             <div class="space-y-1">
                 <x-responsive-nav-link :href="route('login')">
