@@ -1,31 +1,172 @@
+/* SUGESTÃO: Usar um cinza mais claro e suave para o fundo,
+   padrão do Bootstrap, para um visual mais limpo.
+*/
 body {
-    background-color: rgb(176, 174, 174) !important;
+    background-color: #f8f9fa !important; /* Um cinza bem claro */
 }
 
-.nava {
-    background-color: rgb(255, 255, 255);
+/* Melhorias no Card de Produto
+*/
+.custom-card {
+    /* --- Estilos Anteriores (Mantidos) --- */
+    width: 100%;
+    height: 100%; 
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    border: none;
+    border-radius: 0.5rem; /* Cantos arredondados */
+
+    /* --- ADIÇÕES --- */
+    overflow: hidden; /* Importante para o zoom da imagem */
+    position: relative; /* Importante para o badge */
 }
 
-/* Altura fixa para imagem */
+/* Efeito de hover que "levanta" o card 
+   (Levemente ajustado para ser mais suave)
+*/
+.custom-card:hover {
+    transform: translateY(-8px); /* Levanta um pouco mais */
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12); /* Sombra mais forte */
+}
+
+
+/* --- ADIÇÃO: Badge de "Promoção" ou "Novo" --- */
+/* COMO USAR: Adicione este HTML dentro do .custom-card, logo no início:
+  <span class="product-badge">PROMOÇÃO</span>
+  OU
+  <span class="product-badge new">NOVO</span>
+*/
+.product-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background-color: #dc3545; /* Vermelho 'danger' */
+    color: white;
+    padding: 4px 10px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 0.25rem;
+    text-transform: uppercase;
+    z-index: 10;
+    letter-spacing: 0.5px;
+}
+
+/* Badge "Novo" (cor diferente) */
+.product-badge.new {
+    background-color: #198754; /* Verde 'success' */
+}
+
+
+/* Ajuste na Imagem do Card
+*/
 .fixed-img {
     height: 200px;
     object-fit: cover;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+
+    /* --- ADIÇÃO: Transição para o zoom --- */
+    transition: transform 0.4s ease;
 }
 
-/* Tamanho fixo do card */
-.custom-card {
-    width: 10px;
-    height: 10px;
+/* --- ADIÇÃO: Efeito de zoom na imagem ao passar o mouse no card --- */
+.custom-card:hover .fixed-img {
+    transform: scale(1.05); /* Zoom de 5% */
+}
+
+
+/* Corpo do Card
+*/
+.card-body {
+    flex: 1; 
     display: flex;
     flex-direction: column;
+    padding: 1.25rem; /* Aumenta o preenchimento interno */
 }
 
-/* Para garantir altura consistente no corpo */
-.card-body {
-    flex: 1; /* faz o body ocupar espaço restante */
+
+/* --- MELHORIA: Estilos de Tipografia --- */
+
+/* COMO USAR: Garanta que o título do seu produto em index.blade.php
+  tenha a classe "card-title"
+  Ex: <h5 class="card-title">{{ $product->name }}</h5>
+*/
+.card-title {
+    font-weight: 600; /* Semi-bold */
+    font-size: 1.1rem;
+    color: #212529;
+    
+    /* Evita que títulos longos quebrem o layout (adiciona "...") */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 0.5rem;
 }
 
-/* Estiliza o botão de like quando estiver ativo */
+/* COMO USAR: Garanta que a descrição tenha a classe "card-text"
+  Ex: <p class="card-text">{{ $product->description }}</p>
+*/
+.card-text {
+    font-size: 0.9rem;
+    color: #6c757d; /* 'text-muted' */
+    flex-grow: 1; /* Faz a descrição ocupar o espaço, empurrando o preço para baixo */
+}
+
+/* COMO USAR: Adicione a classe "product-price" ao <p> do seu preço
+  Ex: <p class="product-price">R$ {{ ... }}</p>
+*/
+.product-price {
+    font-size: 1.3rem;
+    font-weight: 700; /* Bold */
+    color: #0d6efd; /* Azul 'primary' */
+    margin-top: 1rem; /* Espaço acima do preço */
+    margin-bottom: 0.5rem;
+}
+
+
+/* Rodapé do Card (Botões)
+*/
+.card-footer {
+    margin-top: auto; 
+    background-color: #ffffff;
+    border-top: none;
+    padding: 0 1.25rem 1.25rem; /* Ajusta o padding para alinhar com o card-body */
+}
+
+
+/* --- ADIÇÃO: Estilo para o botão principal --- */
+/*
+  COMO USAR: Adicione a classe "btn-add-cart" ao seu botão de adicionar
+  Ex: <button type="submit" class="btn btn-primary btn-add-cart"> ... </button>
+*/
+.btn-add-cart {
+    width: 100%; /* Botão com largura total */
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+}
+
+.btn-add-cart:hover {
+    transform: scale(1.02); /* Leve "pulso" no hover */
+    box-shadow: 0 4px 15px rgba(13, 110, 253, 0.3); /* Sombra azul */
+}
+
+
+/* Estiliza o botão de like
+*/
+.like-btn {
+    transition: all 0.2s ease;
+}
+
+/* --- MELHORIA: Hover para o botão de like (não-ativo) --- */
+.like-btn:not(.btn-danger):hover {
+    background-color: #fde8e8; /* Rosa bem claro */
+    border-color: #fde8e8;
+}
+
 .like-btn.btn-danger i {
     color: white;
 }

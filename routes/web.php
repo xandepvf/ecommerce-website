@@ -6,10 +6,15 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Models\Product; // *** ADICIONADO ***
 
 // Rota da Página Inicial
 Route::get('/', function () {
-    return view('home');
+    // *** MUDANÇA: Buscar os 3 produtos mais recentes ***
+    $featuredProducts = Product::latest()->take(3)->get();
+    
+    // *** MUDANÇA: Enviar os produtos para a view ***
+    return view('home', ['products' => $featuredProducts]);
 })->name('home');
 
 // Grupo de Rotas que Exigem Autenticação
