@@ -80,9 +80,19 @@
             <div class="col">
                 <div class="card h-100 border-0 shadow-sm card-hover position-relative">
                     
-                    <button class="btn btn-outline-danger btn-sm like-btn position-absolute top-0 end-0 m-2" type="button" style="z-index: 10;">
-                        <i class="bi bi-heart"></i>
-                    </button>
+                    @auth
+    @php
+        // Verifica se o ID do produto existe no array de favoritos
+        $isFavorited = isset($userFavorites[$product->id]);
+    @endphp
+
+    <form action="{{ route('favorites.toggle', $product->id) }}" method="POST" class="position-absolute top-0 end-0 m-2" style="z-index: 10;">
+        @csrf
+        <button type="submit" class="btn {{ $isFavorited ? 'btn-danger' : 'btn-outline-danger' }} btn-sm like-btn"> 
+            <i class="bi {{ $isFavorited ? 'bi-heart-fill' : 'bi-heart' }}"></i>
+        </button>
+    </form>
+@endauth
 
                     <a href="{{ route('products.show', $product->id) }}">
                         @if($product->image)

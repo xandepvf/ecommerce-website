@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\FavoriteController; // <<< ADICIONE ESTE
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
@@ -32,6 +33,8 @@ Route::middleware('auth')->group(function () {
 
     // *** ROTA ADICIONADA: Mostrar detalhes de um pedido específico ***
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show'); 
+    Route::get('/favoritos', [FavoriteController::class, 'index'])->name('favorites.index');
+    Route::post('/favorites/toggle/{product}', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
 
     // Rota Dashboard (opcional, se você criou a view e rota)
     Route::get('/dashboard', function () {
