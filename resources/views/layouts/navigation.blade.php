@@ -48,10 +48,13 @@
                             </span>
                         </x-nav-link>
                         
-                        {{-- Link de Favoritos (Desktop) - Está correto --}}
+                        {{-- Link de Favoritos (Desktop) - CORRIGIDO --}}
                         <x-nav-link :href="route('favorites.index')" :active="request()->routeIs('favorites.index')">
                              <span class="flex items-center">
-                                <x-icons.heart class="h-5 w-5 me-1.5" />
+                                {{-- SUBSTITUÍDO O COMPONENTE PELO SVG --}}
+                                <svg class="h-5 w-5 me-1.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.099 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                                </svg>
                                 {{ __('Favoritos') }}
                             </span>
                         </x-nav-link>
@@ -59,7 +62,6 @@
                 </div>
             </div>
 
-            {{-- *** ESTE É O BLOCO QUE FALTAVA *** --}}
             @auth
             {{-- Dropdown do Usuário (Desktop) --}}
             <div class="hidden sm:flex sm:items-center sm:ms-6">
@@ -93,7 +95,7 @@
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <x-dropdown-link :href="route('logout')"
-                                onclick="event.preventDefault();
+                                    onclick="event.preventDefault();
                                                 this.closest('form').submit();">
                                 <span class="flex items-center text-red-600">
                                     <svg class="h-5 w-5 me-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -107,7 +109,6 @@
                 </x-dropdown>
             </div>
             @endauth
-            {{-- *** FIM DO BLOCO RESTAURADO *** --}}
 
             @guest
             {{-- Links de Guest (Desktop) --}}
@@ -160,7 +161,7 @@
                 <x-responsive-nav-link :href="route('products.index')" :active="request()->routeIs('products.*')">
                     <span class="flex items-center">
                         <svg class="h-5 w-5 me-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
                         </svg>
                         {{ __('Produtos') }}
                     </span>
@@ -168,7 +169,7 @@
                  <x-responsive-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.*')">
                     <span class="flex items-center">
                         <svg class="h-5 w-5 me-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c.51 0 .962-.343 1.087-.835l.383-1.437M7.5 14.25V5.106c0-.621.504-1.125 1.125-1.125h9.75c.621 0 1.125.504 1.125 1.125v9.144M7.5 14.25h11.218c.51 0 .962-.343 1.087-.835l.383-1.437M7.5 14.25H5.625m13.5 0H18m-7.5 0h7.5m-7.5 0l-1.125-1.125" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c.51 0 .962-.343 1.087-.835l.383-1.437M7.5 14.25V5.106c0-.621.504-1.125 1.125-1.125h9.75c.621 0 1.125.504 1.125 1.125v9.144M7.5 14.25h11.218c.51 0 .962-.343 1.087-.835l.383-1.437M7.5 14.25H5.625m13.5 0H18m-7.5 0h7.5m-7.5 0l-1.125-1.125" />
                         </svg>
                         {{ __('Carrinho') }}
                     </span>
@@ -176,16 +177,19 @@
                  <x-responsive-nav-link :href="route('orders.index')" :active="request()->routeIs('orders.index')">
                     <span class="flex items-center">
                         <svg class="h-5 w-5 me-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10.5 21l5.25-11.25M20.25 7.5H3.75m16.5 0l-1.125-1.5H4.875L3.75 7.5m16.5 0v-2.25A2.25 2.25 0 0017.25 3H6.75a2.25 2.25 0 00-2.25 2.25v2.25" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10.5 21l5.25-11.25M20.25 7.5H3.75m16.5 0l-1.125-1.5H4.875L3.75 7.5m16.5 0v-2.25A2.25 2.25 0 0017.25 3H6.75a2.25 2.25 0 00-2.25 2.25v2.25" />
                         </svg>
                         {{ __('Meus Pedidos') }}
                     </span>
                 </x-responsive-nav-link>
 
-                {{-- Link de Favoritos (Mobile) - Está correto --}}
+                {{-- Link de Favoritos (Mobile) - CORRIGIDO --}}
                 <x-responsive-nav-link :href="route('favorites.index')" :active="request()->routeIs('favorites.index')">
                     <span class="flex items-center">
-                        <x-icons.heart class="h-5 w-5 me-2" />
+                        {{-- SUBSTITUÍDO O COMPONENTE PELO SVG --}}
+                        <svg class="h-5 w-5 me-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.099 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                        </svg>
                         {{ __('Favoritos') }}
                     </span>
                 </x-responsive-nav-link>
@@ -212,7 +216,7 @@
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <x-responsive-nav-link :href="route('logout')"
-                        onclick="event.preventDefault(); this.closest('form').submit();">
+                            onclick="event.preventDefault(); this.closest('form').submit();">
                         <span class="flex items-center text-red-600">
                             <svg class="h-5 w-5 me-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
