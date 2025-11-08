@@ -12,7 +12,7 @@ class CheckoutController extends Controller
     public function index()
     {
         // Configura a chave secreta da Stripe
-        Stripe::setApiKey(env('STRIPE_SECRET'));
+        Stripe::setApiKey(config('services.stripe.secret'));
 
         // Pega o total do carrinho (float)
         $amount = (int) (Cart::getTotal() * 100); // em centavos para Stripe
@@ -30,7 +30,8 @@ class CheckoutController extends Controller
 
         return view('checkout.index', [
             'clientSecret' => $intent->client_secret,
-            'stripeKey' => env('STRIPE_KEY'),
+            // CORREÇÃO: Altere de env() para config() aqui também
+            'stripeKey' => config('services.stripe.key'),
         ]);
     }
 
