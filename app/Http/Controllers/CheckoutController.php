@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Stripe\Stripe; // <--- ADICIONE ESTA LINHA
+use Stripe\Stripe;
 use Stripe\PaymentIntent;
-use Cart;
+use Cart; // darryldecode cart facade
 
 
 class CheckoutController extends Controller
@@ -13,6 +13,7 @@ class CheckoutController extends Controller
     public function index()
     {
         // Configura a chave secreta da Stripe
+        // AGORA VAI LER DO FICHEIRO config/services.php CORRETAMENTE
         Stripe::setApiKey(config('services.stripe.secret'));
 
         // Pega o total do carrinho (float)
@@ -31,7 +32,6 @@ class CheckoutController extends Controller
 
         return view('checkout.index', [
             'clientSecret' => $intent->client_secret,
-            // CORREÇÃO: Altere de env() para config() aqui também
             'stripeKey' => config('services.stripe.key'),
         ]);
     }
