@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Stripe\Stripe;
+use Stripe\Stripe; // <--- ADICIONE ESTA LINHA
 use Stripe\PaymentIntent;
-use Cart; // darryldecode cart facade
+use Cart;
+
 
 class CheckoutController extends Controller
 {
