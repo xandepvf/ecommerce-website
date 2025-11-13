@@ -40,10 +40,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
             return view('dashboard');
     })->name('dashboard');
+
+    // ===== MUDANÇA FEITA AQUI =====
+    // Rota para ver detalhes do produto, agora exige login
+    Route::get('products/{product}', [ProductController::class, 'show'])->name('products.show');
 });
 
 // Rotas de Produtos (CRUD completo) - Acesso Aberto
-Route::resource('products', ProductController::class);
+// ===== MUDANÇA FEITA AQUI =====
+// Excluímos a rota 'show' do resource para que a versão autenticada (acima) seja usada
+Route::resource('products', ProductController::class)->except(['show']);
 
 // Rotas do Carrinho - Acesso Aberto
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
