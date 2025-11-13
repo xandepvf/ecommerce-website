@@ -21,6 +21,7 @@ return new class extends Migration
             $table->decimal('price', 8, 2); // Bom para preços
             $table->string('image')->nullable(); // 'nullable' caso não haja imagem
             $table->timestamps(); // Cria 'created_at' e 'updated_at'
+            $table->softDeletes(); // <-- ADICIONE ESTA LINHA
         });
     }
 
