@@ -16,17 +16,19 @@ class ProductController extends Controller
     {
         // $products = Product::all(); // Pega todos
         $products = Product::latest()->paginate(9); // Pega 9 por página, ordenados pelos mais recentes
-        return view('products.index', compact('products'));
+        
+        // *** BLOCO DE CORREÇÃO INICIADO ***
+        // A lógica dos favoritos foi movida para ANTES do return.
         $userFavorites = [];
-    // Verifica se o usuário está logado
-    if (auth()->check()) {
-        // Pega os IDs dos produtos favoritos e usa flip() para checagem rápida
-        $userFavorites = auth()->user()->favorites()->pluck('product_id')->flip();
-    }
-    // *** FIM DO BLOCO ***
+        // Verifica se o usuário está logado
+        if (auth()->check()) {
+            // Pega os IDs dos produtos favoritos e usa flip() para checagem rápida
+            $userFavorites = auth()->user()->favorites()->pluck('product_id')->flip();
+        }
+        // *** FIM DO BLOCO DE CORREÇÃO ***
 
-    // *** MUDANÇA: Passe a variável $userFavorites para a view ***
-    return view('products.index', compact('products', 'userFavorites'));
+        // *** MUDANÇA: Este é agora o único return, passando ambas as variáveis ***
+        return view('products.index', compact('products', 'userFavorites'));
     }
 
     /**
