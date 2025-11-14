@@ -18,6 +18,14 @@ Route::get('/', function () {
     return view('home', ['products' => $featuredProducts]);
 })->name('home');
 
+
+// ===== CORREÇÃO DE SEGURANÇA E ORDEM =====
+// A listagem de produtos (index) permanece pública,
+// pois o 'Route::resource' abaixo (que está protegido)
+// agora exclui o 'index'.
+Route::get('products', [ProductController::class, 'index'])->name('products.index');
+
+
 // Grupo de Rotas que Exigem Autenticação
 Route::middleware('auth')->group(function () {
     // Rotas de Perfil (do Breeze)
@@ -41,15 +49,17 @@ Route::middleware('auth')->group(function () {
             return view('dashboard');
     })->name('dashboard');
 
-    // ===== MUDANÇA FEITA AQUI =====
+    // ===== CORREÇÃO DE ORDEM E SEGURANÇA =====
+    // O CRUD de produtos (create, store, edit, update, destroy)
+    // foi movido para dentro do grupo 'auth' para proteção.
+    // Ele vem ANTES do 'products/{product}' para corrigir o erro 404.
+    // O 'index' e 'show' são excluídos porque são tratados separadamente.
+    Route::resource('products', ProductController::class)->except(['show', 'index']);
+
     // Rota para ver detalhes do produto, agora exige login
     Route::get('products/{product}', [ProductController::class, 'show'])->name('products.show');
 });
 
-// Rotas de Produtos (CRUD completo) - Acesso Aberto
-// ===== MUDANÇA FEITA AQUI =====
-// Excluímos a rota 'show' do resource para que a versão autenticada (acima) seja usada
-Route::resource('products', ProductController::class)->except(['show']);
 
 // Rotas do Carrinho - Acesso Aberto
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
