@@ -2,73 +2,78 @@
 
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\FavoriteController; // <<< ADICIONE ESTE
+use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use App\Models\Product; // *** ADICIONADO ***
+use App\Models\Product;
+// Importante para a rota de limpeza funcionar
+use Darryldecode\Cart\Facades\CartFacade as Cart; 
 
 // Rota da Página Inicial
 Route::get('/', function () {
-    // *** MUDANÇA: Buscar os 3 produtos mais recentes ***
     $featuredProducts = Product::latest()->take(3)->get();
-    
-    // *** MUDANÇA: Enviar os produtos para a view ***
     return view('home', ['products' => $featuredProducts]);
 })->name('home');
 
-
-// ===== CORREÇÃO DE SEGURANÇA E ORDEM =====
-// A listagem de produtos (index) permanece pública,
-// pois o 'Route::resource' abaixo (que está protegido)
-// agora exclui o 'index'.
+// Rota Pública de Listagem
 Route::get('products', [ProductController::class, 'index'])->name('products.index');
 
-
-// Grupo de Rotas que Exigem Autenticação
+// Grupo de Rotas que Exigem Autenticação (Login)
 Route::middleware('auth')->group(function () {
-    // Rotas de Perfil (do Breeze)
+    
+    // --- Rotas de Perfil ---
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Rota para processar o pagamento/finalizar o pedido
+    // --- Rotas de Checkout e Pedidos ---
     Route::post('/checkout/store', [CheckoutController::class, 'store'])->name('checkout.store');
-
-    // Rota para o Histórico de pedidos do usuário
     Route::get('/meus-pedidos', [OrderController::class, 'index'])->name('orders.index');
-
-    // *** ROTA ADICIONADA: Mostrar detalhes de um pedido específico ***
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show'); 
+    
+    // --- Rotas de Favoritos ---
     Route::get('/favoritos', [FavoriteController::class, 'index'])->name('favorites.index');
     Route::post('/favorites/toggle/{product}', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
 
-    // Rota Dashboard (opcional, se você criou a view e rota)
+    // --- Rota de Dashboard ---
     Route::get('/dashboard', function () {
             return view('dashboard');
     })->name('dashboard');
 
-    // ===== CORREÇÃO DE ORDEM E SEGURANÇA =====
-    // O CRUD de produtos (create, store, edit, update, destroy)
-    // foi movido para dentro do grupo 'auth' para proteção.
-    // Ele vem ANTES do 'products/{product}' para corrigir o erro 404.
-    // O 'index' e 'show' são excluídos porque são tratados separadamente.
-    Route::resource('products', ProductController::class)->except(['show', 'index']);
+    // ============================================================
+    // ÁREA ADMINISTRATIVA (Requer middleware 'admin')
+    // A ORDEM AQUI É IMPORTANTE: Rotas específicas (create) devem vir antes das genéricas ({product})
+    // ============================================================
+    Route::middleware('admin')->group(function () {
+        Route::get('/products/create', [ProductController::class, 'create'])->name('products.create'); // <-- ESTA VEM PRIMEIRO
+        Route::post('/products', [ProductController::class, 'store'])->name('products.store');
+        Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
+        Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
+        Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
+    });
 
-    // Rota para ver detalhes do produto, agora exige login
-    Route::get('products/{product}', [ProductController::class, 'show'])->name('products.show');
+    // --- Rota de Detalhes do Produto (Acessível a qualquer logado) ---
+    // Esta rota captura "products/{qualquer_coisa}", por isso deve ficar DEPOIS de "products/create"
+    Route::get('products/{product}', [ProductController::class, 'show'])->name('products.show'); 
 });
-
 
 // Rotas do Carrinho - Acesso Aberto
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-Route::post('/cart/add/{id}', [CartController::class, 'addToCart'])->name('cart.add'); // Mantido seu método addToCart
-Route::patch('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update'); // Rota para atualizar quantidade
-Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove'); // Rota para remover item
+Route::post('/cart/add/{id}', [CartController::class, 'addToCart'])->name('cart.add');
+Route::patch('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
+Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
 
-// Rota para exibir a página de checkout - Acesso Aberto
+// Rota de Checkout - Acesso Aberto
 Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
 
-// Inclui as rotas de autenticação (login, register, etc.) do Breeze
+// ============================================================
+// ROTA DE EMERGÊNCIA (Limpar Carrinho)
+// ============================================================
+Route::get('/limpar-tudo', function () {
+    Cart::clear();
+    return redirect()->route('products.index')->with('success', 'Carrinho limpo com sucesso! Tente comprar novamente.');
+});
+
 require __DIR__.'/auth.php';

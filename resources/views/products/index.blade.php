@@ -2,97 +2,72 @@
 
 @section('content')
 
-{{-- 
-  CSS ADICIONADO DIRETAMENTE AQUI 
-  para estilizar os cards, como solicitado.
---}}
 <style>
-    /* 1. Garante que as imagens do card cubram o espaço 
-         sem distorcer.
-    */
     .card-img-top.fixed-img {
         height: 220px;
         object-fit: cover;
         width: 100%;
     }
-
-    /* 2. Adiciona um efeito suave de "elevação" no card 
-         ao passar o mouse.
-    */
     .card-hover {
         transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
     }
-
     .card-hover:hover {
         transform: translateY(-5px);
         box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
     }
-
-    /* 3. Trunca o texto da descrição em 2 linhas, 
-         evitando que cards fiquem com alturas diferentes.
-    */
     .text-truncate-lines {
         display: -webkit-box;
-        -webkit-line-clamp: 2; /* Número de linhas */
+        -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
         text-overflow: ellipsis;
-        min-height: 40px; /* (2 * altura-da-linha) - ajuste conforme sua fonte */
+        min-height: 40px;
     }
-
-    /* 4. Garante que o link do título não fique sublinhado
-         e mantenha a cor padrão.
-    */
     .card-title-link {
         text-decoration: none;
         color: inherit;
     }
     .card-title-link:hover {
-        color: var(--bs-primary); /* Opcional: muda de cor no hover */
+        color: var(--bs-primary);
     }
 </style>
 
-{{-- MUDANÇA: Container com espaçamento vertical py-4 --}}
 <div class="container py-4" style="max-width: 1200px;">
 
-    {{-- *** MUDANÇA: Exibir Mensagem de Sucesso *** --}}
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             {{ session('success') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
-    {{-- *** FIM DA MUDANÇA *** --}}
 
-    {{-- Título + Botão --}}
     <div class="d-flex justify-content-between align-items-center mb-4 mt-3">
         <h1>Catálogo de Produtos</h1>
-        <a href="{{ route('products.create') }}" class="btn btn-success">
-            <i class="bi bi-plus-lg"></i> Novo Produto
-        </a>
+        
+        {{-- *** SÓ MOSTRA O BOTÃO SE FOR ADMIN *** --}}
+        @if(Auth::check() && Auth::user()->is_admin)
+            <a href="{{ route('products.create') }}" class="btn btn-success">
+                <i class="bi bi-plus-lg"></i> Novo Produto
+            </a>
+        @endif
     </div>
 
-    {{-- Lista de produtos --}}
-    {{-- MUDANÇA: Ajustado 'row' para usar row-cols e g-4 para espaçamento --}}
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         @forelse($products as $product)
-            {{-- MUDANÇA: Removido col-lg-4/col-md-6, usando row-cols agora --}}
             <div class="col">
                 <div class="card h-100 border-0 shadow-sm card-hover position-relative">
                     
                     @auth
-    @php
-        // Verifica se o ID do produto existe no array de favoritos
-        $isFavorited = isset($userFavorites[$product->id]);
-    @endphp
-
-    <form action="{{ route('favorites.toggle', $product->id) }}" method="POST" class="position-absolute top-0 end-0 m-2" style="z-index: 10;">
-        @csrf
-        <button type="submit" class="btn {{ $isFavorited ? 'btn-danger' : 'btn-outline-danger' }} btn-sm like-btn"> 
-            <i class="bi {{ $isFavorited ? 'bi-heart-fill' : 'bi-heart' }}"></i>
-        </button>
-    </form>
-@endauth
+                        @php
+                            $isFavorited = isset($userFavorites[$product->id]);
+                        @endphp
+                        <form action="{{ route('favorites.toggle', $product->id) }}" method="POST" class="position-absolute top-0 end-0 m-2" style="z-index: 10;">
+                            @csrf
+                            <button type="submit" class="btn {{ $isFavorited ? 'btn-danger' : 'btn-outline-danger' }} btn-sm like-btn"> 
+                                <i class="bi {{ $isFavorited ? 'bi-heart-fill' : 'bi-heart' }}"></i>
+                            </button>
+                        </form>
+                    @endauth
 
                     <a href="{{ route('products.show', $product->id) }}">
                         @if($product->image)
@@ -131,7 +106,6 @@
                     </div>
 
                     <div class="card-footer d-flex justify-content-between align-items-center bg-transparent border-top-0 pt-0">
-                        {{-- Formulário Add Carrinho --}}
                         <form action="{{ route('cart.add', $product->id) }}" method="POST" class="d-flex align-items-center gap-2">
                             @csrf
                             <input type="number" name="quantity" min="1" value="1" class="form-control form-control-sm" style="max-width: 70px;">
@@ -141,17 +115,17 @@
                             </button>
                         </form>
 
-                        {{-- *** MUDANÇA: Formulário para REMOVER o Produto *** --}}
-                        <form action="{{ route('products.destroy', $product->id) }}" method="POST" class="ms-2">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm" 
-                                    onclick="return confirm('Tem certeza que deseja excluir este produto?')"> 
-                                <i class="bi bi-trash-fill"></i> 
-                                {{-- <span class="d-none d-md-inline">Excluir</span> --}} {{-- Texto opcional --}}
-                            </button>
-                        </form>
-                        {{-- *** FIM DA MUDANÇA *** --}}
+                        {{-- *** SÓ MOSTRA BOTÃO EXCLUIR SE FOR ADMIN *** --}}
+                        @if(Auth::check() && Auth::user()->is_admin)
+                            <form action="{{ route('products.destroy', $product->id) }}" method="POST" class="ms-2">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm" 
+                                        onclick="return confirm('Tem certeza que deseja excluir este produto?')"> 
+                                    <i class="bi bi-trash-fill"></i> 
+                                </button>
+                            </form>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -163,16 +137,14 @@
                 </div>
             </div>
         @endforelse
-    </div> {{-- Fim da div.row --}}
+    </div>
 
-    {{-- Paginação --}}
     <div class="d-flex justify-content-center mt-4">
         {{ $products->links() }}
     </div>
 
-</div> {{-- Fim do container --}}
+</div>
 
-{{-- Script para alternar o coração --}}
 <script>
     document.querySelectorAll('.like-btn').forEach(button => {
         button.addEventListener('click', () => {

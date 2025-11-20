@@ -5,58 +5,64 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Stripe\Stripe;
 use Stripe\PaymentIntent;
-use Cart; // darryldecode cart facade
-
+use Cart; 
 
 class CheckoutController extends Controller
 {
     public function index()
     {
-        // Configura a chave secreta da Stripe
-        // AGORA VAI LER DO FICHEIRO config/services.php CORRETAMENTE
+        // 1. Configura a chave (Certifique-se que está no .env)
         Stripe::setApiKey(config('services.stripe.secret'));
 
-        // Pega o total do carrinho (float)
-        $amount = (int) (Cart::getTotal() * 100); // em centavos para Stripe
+        // 2. Pega o total e converte para centavos
+        $total = Cart::getTotal();
+        $amount = (int) ($total * 100); 
 
+        // 3. Proteção: Se o carrinho estiver vazio
         if ($amount <= 0) {
-            return redirect()->route('cart.index')->with('error', 'Seu carrinho está vazio.');
+            return redirect()->route('cart.index')
+                ->with('error', 'Seu carrinho está vazio.');
         }
 
-        // Cria o PaymentIntent para a transação
-        $intent = PaymentIntent::create([
-            'amount' => $amount,
-            'currency' => 'brl',
-            'payment_method_types' => ['card'],
-        ]);
+        // 4. Proteção: Se o valor for absurdo (maior que o limite do Stripe)
+        // Isso evita a tela de erro que você mandou no print
+        if ($amount >= 99999999) { 
+            return redirect()->route('cart.index')
+                ->with('error', 'Valor muito alto! Esvazie o carrinho e tente novamente.');
+        }
 
-        return view('checkout.index', [
-            'clientSecret' => $intent->client_secret,
-            'stripeKey' => config('services.stripe.key'),
-        ]);
+        // 5. Tenta criar o pagamento com segurança
+        try {
+            $intent = PaymentIntent::create([
+                'amount' => $amount,
+                'currency' => 'brl',
+                'payment_method_types' => ['card'],
+            ]);
+
+            return view('checkout.index', [
+                'clientSecret' => $intent->client_secret,
+                'stripeKey' => config('services.stripe.key'),
+            ]);
+
+        } catch (\Exception $e) {
+            // Se der erro, volta para o carrinho avisando o motivo
+            return redirect()->route('cart.index')
+                ->with('error', 'Erro no Stripe: ' . $e->getMessage());
+        }
     }
 
-
-    // Método para salvar o pedido após o pagamento ser confirmado no frontend
     public function store(Request $request)
     {
-        // Aqui você pode validar os dados, verificar o pagamento etc
-
-        // Pegando itens do carrinho
         $cartItems = Cart::getContent();
 
         if ($cartItems->isEmpty()) {
-            return redirect()->route('cart.index')->with('error', 'Seu carrinho está vazio.');
+            return redirect()->route('cart.index')->with('error', 'Carrinho vazio.');
         }
 
-        $total = Cart::getTotal();
-
-        // Criando o pedido no banco
         $order = auth()->user()->orders()->create([
-            'total' => $total,
+            'total' => Cart::getTotal(),
         ]);
 
-        // Salvar cada item do carrinho como item do pedido
         foreach ($cartItems as $item) {
             $order->items()->create([
                 'product_id' => $item->id,
@@ -65,9 +71,8 @@ class CheckoutController extends Controller
             ]);
         }
 
-        // Limpar carrinho após salvar pedido
         Cart::clear();
 
-        return redirect()->route('orders.index')->with('success', 'Pedido realizado com sucesso!');
+        return redirect()->route('orders.index')->with('success', 'Pedido realizado!');
     }
 }
