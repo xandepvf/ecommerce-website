@@ -55,7 +55,7 @@
             <h1 class="display-5 fw-bold text-body-emphasis lh-1 mb-4">Seu Novo Estilo Começa Aqui</h1>
             
             <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-                <a href="{{ route('products.index') }}" class="btn btn-primary btn-lg px-4 me-md-2 fw-bold">
+                <a href="{{ Auth::check() ? route('products.index') : route('login') }}" class="btn btn-primary btn-lg px-4 me-md-2 fw-bold">
                     Ver Coleção Completa
                 </a>
             </div>
@@ -63,9 +63,7 @@
     </div>
 </div>
 
-{{-- 
-  *** NOVA SEÇÃO: Produtos em Destaque ***
---}}
+
 <div class="bg-light py-5">
     <div class="container py-4" style="max-width: 1200px;">
         <h2 class="text-center fw-bold mb-4">Nossos Destaques</h2>
@@ -73,22 +71,16 @@
         {{-- Verifica se a variável $products existe e não está vazia --}}
         @if(isset($products) && $products->count() > 0)
             
-            {{-- 
-              Usamos 'row-cols-lg-3' para 3 colunas em telas grandes,
-              exatamente como em 'products/index.blade.php'
-            --}}
+            
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                 
                 {{-- Loop para cada produto --}}
                 @foreach($products as $product)
                     <div class="col">
-                        {{-- 
-                          Card de produto (HTML simplificado de products/index.blade.php)
-                          Removemos os botões "Add" e "Delete" para um visual mais limpo na home.
-                        --}}
+                       
                         <div class="card h-100 border-0 shadow-sm card-hover">
                             
-                            {{-- Link na imagem e no título para a página do produto --}}
+                           
                             <a href="{{ route('products.show', $product->id) }}">
                                 @if($product->image)
                                     <img src="{{ asset('storage/' . $product->image) }}" class="card-img-top fixed-img" alt="{{ $product->name }}">
@@ -108,7 +100,6 @@
                                     {{ $product->description }}
                                 </p>
 
-                                {{-- Preço (mt-auto empurra para baixo) --}}
                                 <div class="mt-auto">
                                     <span class="h5 mb-0 fw-bold text-success">
                                         R$ {{ number_format($product->price, 2, ',', '.') }}
@@ -120,7 +111,6 @@
                 @endforeach
             </div>
         @else
-            {{-- Mensagem caso não haja produtos --}}
             <div class="col-12">
                 <p class="text-center text-muted">Nenhum produto em destaque no momento.</p>
             </div>
