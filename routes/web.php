@@ -47,14 +47,24 @@ Route::middleware('auth')->group(function () {
     // ÁREA ADMINISTRATIVA (Requer middleware 'admin')
     // A ORDEM AQUI É IMPORTANTE: Rotas específicas (create) devem vir antes das genéricas ({product})
     // ============================================================
-    Route::middleware('admin')->group(function () {
-        Route::get('/users', [UserController::class, 'index'])->name('users.index');
-        Route::get('/products/create', [ProductController::class, 'create'])->name('products.create'); // <-- ESTA VEM PRIMEIRO
-        Route::post('/products', [ProductController::class, 'store'])->name('products.store');
-        Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
-        Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
-        Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
-    });
+    // ============================================================
+// ÁREA ADMINISTRATIVA (Requer middleware 'admin')
+// ============================================================
+Route::middleware('admin')->group(function () {
+    
+    // Gerenciamento de Usuários
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit'); // Form de editar
+    Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');  // Salvar edição
+    Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy'); // Deletar
+
+    // Gerenciamento de Produtos
+    Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
+    Route::post('/products', [ProductController::class, 'store'])->name('products.store');
+    Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
+    Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
+    Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
+});
 
     // --- Rota de Detalhes do Produto (Acessível a qualquer logado) ---
     // Esta rota captura "products/{qualquer_coisa}", por isso deve ficar DEPOIS de "products/create"
