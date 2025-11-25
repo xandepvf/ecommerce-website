@@ -6,6 +6,7 @@ use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Models\Product;
 // Importante para a rota de limpeza funcionar
@@ -47,6 +48,7 @@ Route::middleware('auth')->group(function () {
     // A ORDEM AQUI É IMPORTANTE: Rotas específicas (create) devem vir antes das genéricas ({product})
     // ============================================================
     Route::middleware('admin')->group(function () {
+        Route::get('/users', [UserController::class, 'index'])->name('users.index');
         Route::get('/products/create', [ProductController::class, 'create'])->name('products.create'); // <-- ESTA VEM PRIMEIRO
         Route::post('/products', [ProductController::class, 'store'])->name('products.store');
         Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
