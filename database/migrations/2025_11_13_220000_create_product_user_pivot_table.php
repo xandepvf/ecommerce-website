@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Tabela pivot para 'favorites' (muitos-para-muitos)
         Schema::create('product_user', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
             $table->timestamps();
 
-            // Garante que um usuário só possa favoritar um produto uma vez
             $table->unique(['user_id', 'product_id']);
         });
     }

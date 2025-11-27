@@ -31,6 +31,13 @@
                         <x-input-error class="mt-2" :messages="$errors->get('email')" />
                     </div>
 
+                    <div>
+                        <x-input-label for="password" :value="__('Nova Senha')" />
+                        <x-text-input id="password" name="password" type="password" class="mt-1 block w-full" autocomplete="new-password" />
+                        <p class="text-xs text-gray-500 mt-1">Deixe em branco para manter a senha atual.</p>
+                        <x-input-error class="mt-2" :messages="$errors->get('password')" />
+                    </div>
+
                     {{-- Permissão (Admin/Cliente) --}}
                     <div>
                         <x-input-label for="is_admin" :value="__('Nível de Acesso')" />

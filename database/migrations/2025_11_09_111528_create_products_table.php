@@ -18,10 +18,10 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('description');
-            $table->decimal('price', 8, 2); // Bom para preços
-            $table->string('image')->nullable(); // 'nullable' caso não haja imagem
+            $table->decimal('price', 8, 2);
+            $table->string('image')->nullable();
             $table->timestamps(); // Cria 'created_at' e 'updated_at'
-            $table->softDeletes(); // <-- ADICIONE ESTA LINHA
+            $table->softDeletes(); 
         });
     }
 

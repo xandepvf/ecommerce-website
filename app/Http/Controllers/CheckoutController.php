@@ -11,27 +11,22 @@ class CheckoutController extends Controller
 {
     public function index()
     {
-        // 1. Configura a chave (Certifique-se que está no .env)
         Stripe::setApiKey(config('services.stripe.secret'));
 
-        // 2. Pega o total e converte para centavos
         $total = Cart::getTotal();
         $amount = (int) ($total * 100); 
 
-        // 3. Proteção: Se o carrinho estiver vazio
         if ($amount <= 0) {
             return redirect()->route('cart.index')
                 ->with('error', 'Seu carrinho está vazio.');
         }
 
-        // 4. Proteção: Se o valor for absurdo (maior que o limite do Stripe)
-        // Isso evita a tela de erro que você mandou no print
+       
         if ($amount >= 99999999) { 
             return redirect()->route('cart.index')
                 ->with('error', 'Valor muito alto! Esvazie o carrinho e tente novamente.');
         }
 
-        // 5. Tenta criar o pagamento com segurança
         try {
             $intent = PaymentIntent::create([
                 'amount' => $amount,
@@ -45,7 +40,6 @@ class CheckoutController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            // Se der erro, volta para o carrinho avisando o motivo
             return redirect()->route('cart.index')
                 ->with('error', 'Erro no Stripe: ' . $e->getMessage());
         }
